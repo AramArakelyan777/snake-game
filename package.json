@@ -1,11 +1,15 @@
 {
-  "name": "snake-game",
-  "version": "1.0.0",
-  "description": "The famous snake game in the terminal built with Node.",
-  "main": "index.js",
-  "author": "Aram Arakelyan <aram777arakelyan@gmail.com>",
-  "license": "MIT",
-  "dependencies": {
-    "blessed": "^0.1.81"
-  }
+    "name": "snake-game",
+    "version": "1.0.0",
+    "description": "The famous snake game in the terminal built with Node.",
+    "main": "index.js",
+    "author": "Aram Arakelyan <aram777arakelyan@gmail.com>",
+    "license": "MIT",
+    "type": "module",
+    "scripts": {
+        "dev": "node --watch index.js"
+    },
+    "dependencies": {
+        "blessed": "^0.1.81"
+    }
 }

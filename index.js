@@ -55,4 +55,66 @@ function render() {
     screen.render()
 }
 
+function moveSnake(direction) {
+    const head = snake[snake.length - 1]
+    snake.shift()
+
+    switch (direction) {
+        case "right":
+            snake.push({
+                x: head.x,
+                y: head.y + 1,
+            })
+            break
+
+        case "left":
+            snake.push({
+                x: head.x,
+                y: head.y - 1,
+            })
+            break
+
+        case "up":
+            snake.push({
+                x: head.x - 1,
+                y: head.y,
+            })
+            break
+
+        case "down":
+            snake.push({
+                x: head.x + 1,
+                y: head.y,
+            })
+            break
+
+        default:
+            break
+    }
+}
+
+screen.key("right", (ch, key) => {
+    moveSnake("right")
+    render()
+})
+
+screen.key("left", (ch, key) => {
+    moveSnake("left")
+    render()
+})
+
+screen.key("up", (ch, key) => {
+    moveSnake("up")
+    render()
+})
+
+screen.key("down", (ch, key) => {
+    moveSnake("down")
+    render()
+})
+
+screen.key(["q", "C-c"], (ch, key) => {
+    return process.exit(0)
+})
+
 start()

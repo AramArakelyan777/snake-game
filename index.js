@@ -33,10 +33,26 @@ const snake = [
 
 function start() {
     screen.append(box)
+    render()
 }
 
-screen.key(["q", "C-c"], (ch, key) => {
-    return process.exit(0)
-})
+function render() {
+    MATRIX = [
+        [ES, ES, ES, ES, ES],
+        [ES, ES, ES, ES, ES],
+        [ES, ES, ES, ES, ES],
+        [ES, ES, ES, ES, ES],
+        [ES, ES, ES, ES, ES],
+    ]
+
+    for (let i = 0; i < snake.length; i++) {
+        const point = snake[i]
+        MATRIX[point.x][point.y] = SNAKE_SIGN
+    }
+
+    box.content = matrixToText(MATRIX)
+
+    screen.render()
+}
 
 start()

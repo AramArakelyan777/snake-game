@@ -91,26 +91,24 @@ function moveSnake(direction) {
         default:
             break
     }
+
+    render()
 }
 
 screen.key("right", (ch, key) => {
     moveSnake("right")
-    render()
 })
 
 screen.key("left", (ch, key) => {
     moveSnake("left")
-    render()
 })
 
 screen.key("up", (ch, key) => {
     moveSnake("up")
-    render()
 })
 
 screen.key("down", (ch, key) => {
     moveSnake("down")
-    render()
 })
 
 screen.key(["q", "C-c"], (ch, key) => {

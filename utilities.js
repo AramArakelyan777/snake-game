@@ -1,7 +1,8 @@
 export const MATRIX_COLOR = "green"
-export const MATRIX_EMPTY_SIGN = "O "
+export const MATRIX_SIZE = 20
+export const SNAKE_SIGN = "+ "
 
-export const SNAKE_SIGN = "@ "
+const MATRIX_EMPTY_SIGN = "O "
 
 export function matrixToText(matrix) {
     let text = "",
@@ -15,4 +16,20 @@ export function matrixToText(matrix) {
     }
 
     return text
+}
+
+export function generateMatrix() {
+    let matrix = []
+
+    for (let i = 0; i < MATRIX_SIZE; i++) {
+        matrix.push([])
+    }
+
+    for (let i = 0; i < MATRIX_SIZE; i++) {
+        for (let j = 0; j < MATRIX_SIZE; j++) {
+            matrix[i].push(MATRIX_EMPTY_SIGN)
+        }
+    }
+
+    return matrix
 }

@@ -28,14 +28,15 @@ const box = blessed.box({
     height: MATRIX_SIZE + 2,
 })
 
-const snake = [
+let snake = [
     { x: MATRIX_SIZE / 2 - 1, y: MATRIX_SIZE / 2 - 2 },
     { x: MATRIX_SIZE / 2 - 1, y: MATRIX_SIZE / 2 - 1 },
     { x: MATRIX_SIZE / 2 - 1, y: MATRIX_SIZE / 2 },
 ]
 
 let MATRIX = "",
-    head = snake[snake.length - 1]
+    head = snake[snake.length - 1],
+    isGameOver = false
 
 function start() {
     screen.append(box)
@@ -100,14 +101,31 @@ function moveSnake(direction) {
 }
 
 function endGame() {
+    isGameOver = true
     box.setContent(
-        "{center}{red-fg}Game Over!{/red-fg}\n\nPress q to quit...{/center}"
+        "{center}{red-fg}Game Over!{/red-fg}\n\nPress q to quit or r to restart.{/center}"
     )
     screen.render()
 }
 
+function resetGame() {
+    snake = [
+        { x: MATRIX_SIZE / 2 - 1, y: MATRIX_SIZE / 2 - 2 },
+        { x: MATRIX_SIZE / 2 - 1, y: MATRIX_SIZE / 2 - 1 },
+        { x: MATRIX_SIZE / 2 - 1, y: MATRIX_SIZE / 2 },
+    ]
+    head = snake[snake.length - 1]
+    isGameOver = false
+    render()
+}
+
 screen.key(["right", "left", "up", "down"], (ch, key) => {
+    if (isGameOver) return
     moveSnake(key.name)
+})
+
+screen.key(["r"], () => {
+    if (isGameOver) resetGame()
 })
 
 screen.key(["q", "C-c"], () => {

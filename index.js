@@ -2,6 +2,7 @@ import blessed from "blessed"
 import {
     matrixToText,
     MATRIX_COLOR,
+    MATRIX_SIZE,
     SNAKE_SIGN,
     generateMatrix,
 } from "./utilities.js"
@@ -25,13 +26,14 @@ const box = blessed.box({
     left: "center",
 })
 
-let MATRIX = ""
-
 const snake = [
     { x: 0, y: 0 },
     { x: 0, y: 1 },
     { x: 0, y: 2 },
 ]
+
+let MATRIX = "",
+    head = snake[snake.length - 1]
 
 function start() {
     screen.append(box)
@@ -51,9 +53,27 @@ function render() {
     screen.render()
 }
 
-function moveSnake(direction) {
-    const head = snake[snake.length - 1]
+function checkIfTouchedBorders(head) {
+    if (
+        head.x < 0 ||
+        head.x >= MATRIX_SIZE ||
+        head.y < 0 ||
+        head.y >= MATRIX_SIZE
+    )
+        return true
 
+    return false
+}
+
+function checkIfTouchedItself(head) {
+    for (let i = 0; i < snake.length - 1; i++) {
+        const point = snake[i]
+        if (head.x === point.x && head.y === point.y) return true
+    }
+    return false
+}
+
+function moveSnake(direction) {
     snake.shift()
 
     switch (direction) {
@@ -88,6 +108,11 @@ function moveSnake(direction) {
         default:
             break
     }
+
+    head = snake[snake.length - 1]
+
+    if (checkIfTouchedBorders(head) || checkIfTouchedItself(head))
+        return process.exit(0)
 
     render()
 }

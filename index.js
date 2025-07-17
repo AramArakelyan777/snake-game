@@ -4,26 +4,28 @@ import {
     MATRIX_COLOR,
     MATRIX_SIZE,
     SNAKE_SIGN,
+    SNAKE_HEAD_COLOR,
     generateMatrix,
 } from "./utilities.js"
 
 const screen = blessed.screen({
     smartCSR: true,
+    title: "Snake Game",
 })
 
 const box = blessed.box({
-    content: "",
+    top: "center",
+    left: "center",
+    tags: true,
     border: {
-        type: "line",
         fg: MATRIX_COLOR,
+        type: "line",
     },
     style: {
         fg: MATRIX_COLOR,
     },
-    width: "75%",
-    height: "75%",
-    top: "center",
-    left: "center",
+    width: MATRIX_SIZE * 2 + 2,
+    height: MATRIX_SIZE + 2,
 })
 
 const snake = [
@@ -45,24 +47,24 @@ function render() {
 
     for (let i = 0; i < snake.length; i++) {
         const point = snake[i]
-        MATRIX[point.x][point.y] = SNAKE_SIGN
+        const isHead = i === snake.length - 1
+
+        MATRIX[point.x][point.y] = isHead
+            ? `{${SNAKE_HEAD_COLOR}-fg}${SNAKE_SIGN}{/}`
+            : `{${MATRIX_COLOR}-fg}${SNAKE_SIGN}{/}`
     }
 
-    box.content = matrixToText(MATRIX)
-
+    box.setContent(matrixToText(MATRIX))
     screen.render()
 }
 
 function checkIfTouchedBorders(head) {
-    if (
+    return (
         head.x < 0 ||
         head.x >= MATRIX_SIZE ||
         head.y < 0 ||
         head.y >= MATRIX_SIZE
     )
-        return true
-
-    return false
 }
 
 function checkIfTouchedItself(head) {
@@ -78,63 +80,42 @@ function moveSnake(direction) {
 
     switch (direction) {
         case "right":
-            snake.push({
-                x: head.x,
-                y: head.y + 1,
-            })
+            snake.push({ x: head.x, y: head.y + 1 })
             break
-
         case "left":
-            snake.push({
-                x: head.x,
-                y: head.y - 1,
-            })
+            snake.push({ x: head.x, y: head.y - 1 })
             break
-
         case "up":
-            snake.push({
-                x: head.x - 1,
-                y: head.y,
-            })
+            snake.push({ x: head.x - 1, y: head.y })
             break
-
         case "down":
-            snake.push({
-                x: head.x + 1,
-                y: head.y,
-            })
-            break
-
-        default:
+            snake.push({ x: head.x + 1, y: head.y })
             break
     }
 
     head = snake[snake.length - 1]
 
-    if (checkIfTouchedBorders(head) || checkIfTouchedItself(head))
-        return process.exit(0)
-
-    render()
+    if (checkIfTouchedBorders(head) || checkIfTouchedItself(head)) endGame()
+    else render()
 }
 
-screen.key("right", (ch, key) => {
-    moveSnake("right")
+function endGame() {
+    box.setContent(
+        "{center}{red-fg}Game Over!{/red-fg}\n\nPress q to quit...{/center}"
+    )
+    screen.render()
+}
+
+screen.key(["right", "left", "up", "down"], (ch, key) => {
+    moveSnake(key.name)
 })
 
-screen.key("left", (ch, key) => {
-    moveSnake("left")
-})
-
-screen.key("up", (ch, key) => {
-    moveSnake("up")
-})
-
-screen.key("down", (ch, key) => {
-    moveSnake("down")
-})
-
-screen.key(["q", "C-c"], (ch, key) => {
+screen.key(["q", "C-c"], () => {
     return process.exit(0)
+})
+
+screen.on("resize", () => {
+    render()
 })
 
 start()

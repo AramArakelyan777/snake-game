@@ -1,6 +1,7 @@
 export const MATRIX_COLOR = "green"
 export const MATRIX_SIZE = 20
-export const SNAKE_SIGN = "* "
+export const SNAKE_SIGN = "O "
+export const SNAKE_HEAD_COLOR = "#0a4a00"
 
 const MATRIX_EMPTY_SIGN = "_ "
 

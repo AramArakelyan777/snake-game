@@ -3,7 +3,7 @@ export const MATRIX_SIZE = 20
 export const SNAKE_SIGN = "O "
 export const SNAKE_HEAD_COLOR = "#0a4a00"
 
-const MATRIX_EMPTY_SIGN = "_ "
+const MATRIX_EMPTY_SIGN = "  "
 
 export function matrixToText(matrix) {
     let text = "",

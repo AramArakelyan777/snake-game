@@ -29,9 +29,9 @@ const box = blessed.box({
 })
 
 const snake = [
-    { x: 0, y: 0 },
-    { x: 0, y: 1 },
-    { x: 0, y: 2 },
+    { x: MATRIX_SIZE / 2 - 1, y: MATRIX_SIZE / 2 - 2 },
+    { x: MATRIX_SIZE / 2 - 1, y: MATRIX_SIZE / 2 - 1 },
+    { x: MATRIX_SIZE / 2 - 1, y: MATRIX_SIZE / 2 },
 ]
 
 let MATRIX = "",

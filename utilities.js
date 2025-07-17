@@ -1,9 +1,9 @@
-export const MATRIX_COLOR = "green"
+export const MATRIX_COLOR = "#004705"
 export const MATRIX_SIZE = 20
-export const SNAKE_SIGN = "O "
-export const SNAKE_HEAD_COLOR = "#0a4a00"
+export const SNAKE_SIGN = "⬤ "
+export const SNAKE_HEAD_COLOR = "green"
 
-const MATRIX_EMPTY_SIGN = "  "
+const MATRIX_EMPTY_SIGN = "_ "
 
 export function matrixToText(matrix) {
     let text = "",

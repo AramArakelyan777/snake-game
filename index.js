@@ -3,9 +3,12 @@ import {
     matrixToText,
     MATRIX_COLOR,
     MATRIX_SIZE,
+    MATRIX_EMPTY_SIGN,
     SNAKE_SIGN,
     SNAKE_HEAD_COLOR,
+    FOOD_SIGN,
     generateMatrix,
+    getRandomIndex,
 } from "./utilities.js"
 
 const screen = blessed.screen({
@@ -28,17 +31,26 @@ const box = blessed.box({
     height: MATRIX_SIZE + 2,
 })
 
-let snake = [
-    { x: MATRIX_SIZE / 2 - 1, y: MATRIX_SIZE / 2 - 2 },
-    { x: MATRIX_SIZE / 2 - 1, y: MATRIX_SIZE / 2 - 1 },
-    { x: MATRIX_SIZE / 2 - 1, y: MATRIX_SIZE / 2 },
-]
-
 let MATRIX = "",
+    snake = [
+        {
+            x: Math.round(MATRIX_SIZE / 2) - 1,
+            y: Math.round(MATRIX_SIZE / 2) - 2,
+        },
+        {
+            x: Math.round(MATRIX_SIZE / 2) - 1,
+            y: Math.round(MATRIX_SIZE / 2) - 1,
+        },
+        { x: Math.round(MATRIX_SIZE / 2) - 1, y: Math.round(MATRIX_SIZE / 2) },
+    ],
     head = snake[snake.length - 1],
-    isGameOver = false
+    isGameOver = false,
+    food
 
 function start() {
+    if (MATRIX_SIZE < snake.length) return
+
+    setFoodCoords()
     screen.append(box)
     render()
 }
@@ -50,6 +62,7 @@ function render() {
         const point = snake[i]
         const isHead = i === snake.length - 1
 
+        MATRIX[food.x][food.y] = FOOD_SIGN
         MATRIX[point.x][point.y] = isHead
             ? `{${SNAKE_HEAD_COLOR}-fg}${SNAKE_SIGN}{/}`
             : `{${MATRIX_COLOR}-fg}${SNAKE_SIGN}{/}`
@@ -57,6 +70,16 @@ function render() {
 
     box.setContent(matrixToText(MATRIX))
     screen.render()
+}
+
+function setFoodCoords() {
+    for (let i = 0; i < MATRIX_SIZE; i++) {
+        for (let j = 0; j < MATRIX_SIZE; j++) {
+            food = { x: getRandomIndex(), y: getRandomIndex() }
+
+            if (MATRIX && MATRIX[food.x][food.x] === MATRIX_EMPTY_SIGN) break
+        }
+    }
 }
 
 function checkIfTouchedBorders(head) {
@@ -74,6 +97,10 @@ function checkIfTouchedItself(head) {
         if (head.x === point.x && head.y === point.y) return true
     }
     return false
+}
+
+function checkIfAteFood(head) {
+    return head.x === food.x && head.y === food.y
 }
 
 function moveSnake(direction) {
@@ -96,6 +123,8 @@ function moveSnake(direction) {
 
     head = snake[snake.length - 1]
 
+    if (checkIfAteFood(head)) setFoodCoords()
+
     if (checkIfTouchedBorders(head) || checkIfTouchedItself(head)) endGame()
     else render()
 }
@@ -110,9 +139,15 @@ function endGame() {
 
 function resetGame() {
     snake = [
-        { x: MATRIX_SIZE / 2 - 1, y: MATRIX_SIZE / 2 - 2 },
-        { x: MATRIX_SIZE / 2 - 1, y: MATRIX_SIZE / 2 - 1 },
-        { x: MATRIX_SIZE / 2 - 1, y: MATRIX_SIZE / 2 },
+        {
+            x: Math.round(MATRIX_SIZE / 2) - 1,
+            y: Math.round(MATRIX_SIZE / 2) - 2,
+        },
+        {
+            x: Math.round(MATRIX_SIZE / 2) - 1,
+            y: Math.round(MATRIX_SIZE / 2) - 1,
+        },
+        { x: Math.round(MATRIX_SIZE / 2) - 1, y: Math.round(MATRIX_SIZE / 2) },
     ]
     head = snake[snake.length - 1]
     isGameOver = false

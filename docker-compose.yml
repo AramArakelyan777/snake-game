@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  snake-game:
+    build: .
+    image: snake-game
+    container_name: snake-game
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/usr/src/app

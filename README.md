@@ -2,6 +2,9 @@
 
 A classic Snake game of the first version running in the terminal, built with Node.js and the [blessed](https://github.com/chjj/blessed) library for rich terminal UI.
 
+## DEMO VIDEO
+https://www.youtube.com/watch?v=kKR7gD937kY
+
 ## Features
 
 - Play Snake directly in your terminal

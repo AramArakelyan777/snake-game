@@ -45,7 +45,8 @@ let MATRIX = generateMatrix(),
     ],
     head = snake[snake.length - 1],
     isGameOver = false,
-    food
+    food,
+    timerId
 
 function start() {
     if (MATRIX_SIZE < snake.length) return
@@ -77,7 +78,11 @@ function setFoodCoords() {
         const x = getRandomIndex()
         const y = getRandomIndex()
 
-        if (MATRIX[x][y] === MATRIX_EMPTY_SIGN) {
+        const isOnSnake = snake.some(
+            (segment) => segment.x === x && segment.y === y
+        )
+
+        if (!isOnSnake) {
             food = { x, y }
             break
         }
@@ -142,6 +147,7 @@ function moveSnake(direction) {
 
 function endGame(message) {
     isGameOver = true
+    clearInterval(timerId)
     box.setContent(
         `{center}{cyan-fg}${message}{/cyan-fg}\n\nPress q to quit or r to restart.{/center}`
     )
@@ -167,7 +173,11 @@ function resetGame() {
 
 screen.key(["right", "left", "up", "down"], (ch, key) => {
     if (isGameOver) return
-    moveSnake(key.name)
+    if (timerId) clearInterval(timerId)
+
+    timerId = setInterval(() => {
+        moveSnake(key.name)
+    }, 100)
 })
 
 screen.key(["r"], () => {

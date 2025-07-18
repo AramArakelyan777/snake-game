@@ -31,6 +31,8 @@ const box = blessed.box({
     height: MATRIX_SIZE + 2,
 })
 
+const scoreText = blessed.text()
+
 let MATRIX = generateMatrix(),
     snake = [
         {
@@ -46,12 +48,14 @@ let MATRIX = generateMatrix(),
     head = snake[snake.length - 1],
     isGameOver = false,
     food,
-    timerId
+    timerId,
+    score = 0
 
 function start() {
     if (MATRIX_SIZE < snake.length) return
 
     setFoodCoords()
+    screen.append(scoreText)
     screen.append(box)
     render()
 }
@@ -115,8 +119,11 @@ function checkIfWin() {
 }
 
 function moveSnake(direction) {
-    if (checkIfAteFood(head)) setFoodCoords()
-    else snake.shift()
+    if (checkIfAteFood(head)) {
+        setFoodCoords()
+        score += 1
+        scoreText.setContent(`Score: ${score}`)
+    } else snake.shift()
 
     switch (direction) {
         case "right":
@@ -147,6 +154,8 @@ function moveSnake(direction) {
 
 function endGame(message) {
     isGameOver = true
+    score = 0
+    scoreText.setContent("")
     clearInterval(timerId)
     box.setContent(
         `{center}{cyan-fg}${message}{/cyan-fg}\n\nPress q to quit or r to restart.{/center}`

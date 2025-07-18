@@ -31,7 +31,7 @@ const box = blessed.box({
     height: MATRIX_SIZE + 2,
 })
 
-let MATRIX = "",
+let MATRIX = generateMatrix(),
     snake = [
         {
             x: Math.round(MATRIX_SIZE / 2) - 1,
@@ -73,11 +73,13 @@ function render() {
 }
 
 function setFoodCoords() {
-    for (let i = 0; i < MATRIX_SIZE; i++) {
-        for (let j = 0; j < MATRIX_SIZE; j++) {
-            food = { x: getRandomIndex(), y: getRandomIndex() }
+    while (true) {
+        const x = getRandomIndex()
+        const y = getRandomIndex()
 
-            if (MATRIX && MATRIX[food.x][food.x] === MATRIX_EMPTY_SIGN) break
+        if (MATRIX[x][y] === MATRIX_EMPTY_SIGN) {
+            food = { x, y }
+            break
         }
     }
 }

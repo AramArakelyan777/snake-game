@@ -3,7 +3,6 @@ import {
     matrixToText,
     MATRIX_COLOR,
     MATRIX_SIZE,
-    MATRIX_EMPTY_SIGN,
     SNAKE_SIGN,
     SNAKE_HEAD_COLOR,
     FOOD_SIGN,

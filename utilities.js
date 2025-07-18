@@ -20,19 +20,9 @@ export function matrixToText(matrix) {
 }
 
 export function generateMatrix() {
-    let matrix = []
-
-    for (let i = 0; i < MATRIX_SIZE; i++) {
-        matrix.push([])
-    }
-
-    for (let i = 0; i < MATRIX_SIZE; i++) {
-        for (let j = 0; j < MATRIX_SIZE; j++) {
-            matrix[i].push(MATRIX_EMPTY_SIGN)
-        }
-    }
-
-    return matrix
+    return Array.from({ length: MATRIX_SIZE }, () =>
+        Array.from({ length: MATRIX_SIZE }, () => MATRIX_EMPTY_SIGN)
+    )
 }
 
 export function getRandomIndex() {

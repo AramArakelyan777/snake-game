@@ -67,30 +67,32 @@ function render() {
         const point = snake[i]
         const isHead = i === snake.length - 1
 
-        MATRIX[food.x][food.y] = FOOD_SIGN
         MATRIX[point.x][point.y] = isHead
             ? `{${SNAKE_HEAD_COLOR}-fg}${SNAKE_SIGN}{/}`
             : `{${MATRIX_COLOR}-fg}${SNAKE_SIGN}{/}`
     }
+
+    MATRIX[food.x][food.y] = FOOD_SIGN
 
     box.setContent(matrixToText(MATRIX))
     screen.render()
 }
 
 function setFoodCoords() {
-    while (true) {
-        const x = getRandomIndex()
-        const y = getRandomIndex()
+    const emptyCells = []
 
-        const isOnSnake = snake.some(
-            (segment) => segment.x === x && segment.y === y
-        )
-
-        if (!isOnSnake) {
-            food = { x, y }
-            break
+    for (let x = 0; x < MATRIX_SIZE; x++) {
+        for (let y = 0; y < MATRIX_SIZE; y++) {
+            if (!snake.some((segment) => segment.x === x && segment.y === y)) {
+                emptyCells.push({ x, y })
+            }
         }
     }
+
+    if (emptyCells.length === 0) return
+
+    const { x, y } = emptyCells[Math.floor(Math.random() * emptyCells.length)]
+    food = { x, y }
 }
 
 function checkIfTouchedBorders(head) {
@@ -177,7 +179,11 @@ function resetGame() {
     ]
     head = snake[snake.length - 1]
     isGameOver = false
+    score = 0
+    setFoodCoords()
     render()
+
+    if (timerId) clearInterval(timerId)
 }
 
 screen.key(["right", "left", "up", "down"], (ch, key) => {

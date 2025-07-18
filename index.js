@@ -105,8 +105,13 @@ function checkIfAteFood(head) {
     return head.x === food.x && head.y === food.y
 }
 
+function checkIfWin() {
+    return snake.length === MATRIX_SIZE * MATRIX_SIZE
+}
+
 function moveSnake(direction) {
-    snake.shift()
+    if (checkIfAteFood(head)) setFoodCoords()
+    else snake.shift()
 
     switch (direction) {
         case "right":
@@ -125,16 +130,20 @@ function moveSnake(direction) {
 
     head = snake[snake.length - 1]
 
-    if (checkIfAteFood(head)) setFoodCoords()
+    if (checkIfWin()) {
+        endGame("You win!")
+        return
+    }
 
-    if (checkIfTouchedBorders(head) || checkIfTouchedItself(head)) endGame()
+    if (checkIfTouchedBorders(head) || checkIfTouchedItself(head))
+        endGame("Game over!")
     else render()
 }
 
-function endGame() {
+function endGame(message) {
     isGameOver = true
     box.setContent(
-        "{center}{red-fg}Game Over!{/red-fg}\n\nPress q to quit or r to restart.{/center}"
+        `{center}{cyan-fg}${message}{/cyan-fg}\n\nPress q to quit or r to restart.{/center}`
     )
     screen.render()
 }
@@ -167,10 +176,6 @@ screen.key(["r"], () => {
 
 screen.key(["q", "C-c"], () => {
     return process.exit(0)
-})
-
-screen.on("resize", () => {
-    render()
 })
 
 start()

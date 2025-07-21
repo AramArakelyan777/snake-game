@@ -7,7 +7,6 @@ import {
     SNAKE_HEAD_COLOR,
     FOOD_SIGN,
     generateMatrix,
-    getRandomIndex,
 } from "./utilities.js"
 
 const screen = blessed.screen({

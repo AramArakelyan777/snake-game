@@ -4,6 +4,7 @@ export const MATRIX_EMPTY_SIGN = "  "
 export const SNAKE_SIGN = "# "
 export const SNAKE_HEAD_COLOR = "green"
 export const FOOD_SIGN = "* "
+export const DEFAULT_DIRECTION = "right"
 
 export function matrixToText(matrix) {
     let text = "",

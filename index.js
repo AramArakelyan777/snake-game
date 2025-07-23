@@ -6,6 +6,7 @@ import {
     SNAKE_SIGN,
     SNAKE_HEAD_COLOR,
     FOOD_SIGN,
+    DEFAULT_DIRECTION,
     generateMatrix,
 } from "./utilities.js"
 
@@ -47,7 +48,8 @@ let MATRIX = generateMatrix(),
     isGameOver = false,
     food,
     timerId,
-    score = 0
+    score = 0,
+    directionsQueue = [DEFAULT_DIRECTION]
 
 function start() {
     if (MATRIX_SIZE < snake.length) return
@@ -56,6 +58,10 @@ function start() {
     screen.append(scoreText)
     screen.append(box)
     render()
+
+    timerId = setInterval(() => {
+        if (!isGameOver) moveSnake()
+    }, 75)
 }
 
 function render() {
@@ -70,7 +76,7 @@ function render() {
             : `{${MATRIX_COLOR}-fg}${SNAKE_SIGN}{/}`
     }
 
-    MATRIX[food.x][food.y] = FOOD_SIGN
+    if (food) MATRIX[food.x][food.y] = FOOD_SIGN
 
     box.setContent(matrixToText(MATRIX))
     screen.render()
@@ -87,25 +93,28 @@ function setFoodCoords() {
         }
     }
 
-    if (emptyCells.length === 0) return
+    if (emptyCells.length === 0) {
+        food = null
+        return
+    }
 
     const { x, y } = emptyCells[Math.floor(Math.random() * emptyCells.length)]
     food = { x, y }
 }
 
-function checkIfTouchedBorders(direction, head) {
+function changeDirWhenTouchesBorders(direction, point) {
     switch (direction) {
         case "up":
-            if (head.x < 0) head.x = MATRIX_SIZE - 1
+            if (point.x < 0) point.x = MATRIX_SIZE - 1
             break
         case "down":
-            if (head.x >= MATRIX_SIZE) head.x = 0
+            if (point.x >= MATRIX_SIZE) point.x = 0
             break
         case "left":
-            if (head.y < 0) head.y = MATRIX_SIZE - 1
+            if (point.y < 0) point.y = MATRIX_SIZE - 1
             break
         case "right":
-            if (head.y >= MATRIX_SIZE) head.y = 0
+            if (point.y >= MATRIX_SIZE) point.y = 0
             break
     }
 }
@@ -119,53 +128,68 @@ function checkIfTouchedItself(head) {
 }
 
 function checkIfAteFood(head) {
-    return head.x === food.x && head.y === food.y
+    return food && head.x === food.x && head.y === food.y
 }
 
 function checkIfWin() {
     return snake.length === MATRIX_SIZE * MATRIX_SIZE
 }
 
-function moveSnake(direction) {
-    if (checkIfAteFood(head)) {
-        setFoodCoords()
-        score += 1
-        scoreText.setContent(`Score: ${score}`)
-    } else snake.shift()
+function isOpposite(dir1, dir2) {
+    return (
+        (dir1 === "up" && dir2 === "down") ||
+        (dir1 === "down" && dir2 === "up") ||
+        (dir1 === "left" && dir2 === "right") ||
+        (dir1 === "right" && dir2 === "left")
+    )
+}
 
-    switch (direction) {
+function moveSnake() {
+    const currentDirection = directionsQueue[0]
+    let newHead = { ...head }
+
+    switch (currentDirection) {
         case "right":
-            snake.push({ x: head.x, y: head.y + 1 })
+            newHead.y += 1
             break
         case "left":
-            snake.push({ x: head.x, y: head.y - 1 })
+            newHead.y -= 1
             break
         case "up":
-            snake.push({ x: head.x - 1, y: head.y })
+            newHead.x -= 1
             break
         case "down":
-            snake.push({ x: head.x + 1, y: head.y })
+            newHead.x += 1
             break
     }
 
-    head = snake[snake.length - 1]
+    changeDirWhenTouchesBorders(currentDirection, newHead)
 
-    if (checkIfWin()) {
-        endGame("You win!")
-        return
+    if (checkIfTouchedItself(newHead)) return endGame("Game over!")
+
+    if (checkIfAteFood(newHead)) {
+        score += 1
+        scoreText.setContent(`Score: ${score}`)
+        setFoodCoords()
+    } else {
+        snake.shift()
     }
 
-    checkIfTouchedBorders(direction, head)
+    snake.push(newHead)
+    head = newHead
 
-    if (checkIfTouchedItself(head))
-        endGame("Game over!")
-    else render()
+    if (checkIfWin()) return endGame("You win!")
+
+    render()
+
+    if (directionsQueue.length > 1) directionsQueue.shift()
 }
 
 function endGame(message) {
     isGameOver = true
     score = 0
     scoreText.setContent("")
+    directionsQueue = []
     clearInterval(timerId)
     box.setContent(
         `{center}{cyan-fg}${message}{/cyan-fg}\n\nPress q to quit or r to restart.{/center}`
@@ -188,19 +212,25 @@ function resetGame() {
     head = snake[snake.length - 1]
     isGameOver = false
     score = 0
+    directionsQueue = [DEFAULT_DIRECTION]
     setFoodCoords()
     render()
 
     if (timerId) clearInterval(timerId)
+    timerId = setInterval(() => {
+        if (!isGameOver) moveSnake()
+    }, 75)
 }
 
 screen.key(["right", "left", "up", "down"], (ch, key) => {
     if (isGameOver) return
-    if (timerId) clearInterval(timerId)
 
-    timerId = setInterval(() => {
-        moveSnake(key.name)
-    }, 100)
+    const lastDirection = directionsQueue[directionsQueue.length - 1]
+    const newDirection = key.name
+
+    if (!isOpposite(lastDirection, newDirection)) {
+        if (directionsQueue.length < 3) directionsQueue.push(newDirection)
+    }
 })
 
 screen.key(["r"], () => {

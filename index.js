@@ -61,7 +61,7 @@ function start() {
 
     timerId = setInterval(() => {
         if (!isGameOver) moveSnake()
-    }, 75)
+    }, 85)
 }
 
 function render() {

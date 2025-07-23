@@ -93,13 +93,21 @@ function setFoodCoords() {
     food = { x, y }
 }
 
-function checkIfTouchedBorders(head) {
-    return (
-        head.x < 0 ||
-        head.x >= MATRIX_SIZE ||
-        head.y < 0 ||
-        head.y >= MATRIX_SIZE
-    )
+function checkIfTouchedBorders(direction, head) {
+    switch (direction) {
+        case "up":
+            if (head.x < 0) head.x = MATRIX_SIZE - 1
+            break
+        case "down":
+            if (head.x >= MATRIX_SIZE) head.x = 0
+            break
+        case "left":
+            if (head.y < 0) head.y = MATRIX_SIZE - 1
+            break
+        case "right":
+            if (head.y >= MATRIX_SIZE) head.y = 0
+            break
+    }
 }
 
 function checkIfTouchedItself(head) {
@@ -147,7 +155,9 @@ function moveSnake(direction) {
         return
     }
 
-    if (checkIfTouchedBorders(head) || checkIfTouchedItself(head))
+    checkIfTouchedBorders(direction, head)
+
+    if (checkIfTouchedItself(head))
         endGame("Game over!")
     else render()
 }
